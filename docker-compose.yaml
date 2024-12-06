@@ -1,0 +1,38 @@
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    volumes:
+      - dynamodb_data:/home/dynamodblocal
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: admin123
+    ports:
+      - "8000:8000"
+
+  api:
+    build: ./backend
+    depends_on:
+      - dynamodb
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: admin123
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/app:/app/app
+
+  # ui:
+  #   build: ./frontend
+  #   depends_on:
+  #     - api
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend/app:/app/app
+
+networks:
+  default:
+    name: kanban
+
+volumes:
+  dynamodb_data:

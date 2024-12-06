@@ -1,0 +1,6 @@
+boto3==1.35.76
+fastapi==0.115.6
+mypy-boto3-dynamodb==1.35.74
+graphene==3.4.3
+starlette-graphene3==0.6.0
+uvicorn==0.32.0
