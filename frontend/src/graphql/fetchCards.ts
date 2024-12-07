@@ -1,8 +1,7 @@
+import { CARD_ENDPOINT } from "../constants";
 import { Card } from "../models/Card";
 
-const CARD_ENDPOINT = "http://localhost:8080/card";
-
-export const fetchCards = async (): Promise<Card[]> => {
+const fetchCards = async (): Promise<Card[]> => {
   const query = `
     query GetCards {
       listCards {
@@ -30,3 +29,5 @@ export const fetchCards = async (): Promise<Card[]> => {
   console.log(result.data.listCards);
   return result.data.listCards;
 };
+
+export default fetchCards;

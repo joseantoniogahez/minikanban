@@ -12,6 +12,7 @@ interface ColumnComponentProps {
   onDragOver: (e: React.DragEvent) => void;
   onDrop: () => void;
   handleDragStart: (card: Card) => void;
+  handleDeleteCard: (card: Card) => void;
 }
 
 const ColumnComponent: React.FC<ColumnComponentProps> = ({
@@ -24,6 +25,7 @@ const ColumnComponent: React.FC<ColumnComponentProps> = ({
   onDragOver,
   onDrop,
   handleDragStart,
+  handleDeleteCard,
 }) => (
   <div
     className={`h-screen place-items-center transition-colors ${
@@ -41,6 +43,7 @@ const ColumnComponent: React.FC<ColumnComponentProps> = ({
           key={card.id}
           card={card}
           onDragStart={() => handleDragStart(card)}
+          onDelete={() => handleDeleteCard(card)}
         />
       ))}
     </div>

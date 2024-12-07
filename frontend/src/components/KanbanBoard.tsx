@@ -1,13 +1,14 @@
 import React from "react";
-import { Card, ColumnState } from "../models/Card";
+import { Card, ColumnState, StatusEnum } from "../models/Card";
 import ColumnComponent from "./ColumnComponent";
 
 interface KanbanBoardProps {
   columns: ColumnState;
   draggingColumn: string | null;
-  setDraggingColumn: (key: string | null) => void;
-  handleDrop: (key: string) => void;
+  setDraggingColumn: (key: StatusEnum | null) => void;
+  handleDrop: (key: StatusEnum) => void;
   handleDragStart: (card: Card) => void;
+  handleDeleteCard: (card: Card) => void;
 }
 
 const KanbanBoard: React.FC<KanbanBoardProps> = ({
@@ -16,13 +17,14 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   setDraggingColumn,
   handleDrop,
   handleDragStart,
+  handleDeleteCard,
 }) => (
   <div className="columns-3 gap-y-8 h-screen">
     {Object.entries(columns).map(([key, cards]) => {
       const columnProps = {
-        to_do: { title: "TO DO", color: "stone" },
-        in_progress: { title: "IN PROGRESS", color: "cyan" },
-        done: { title: "DONE", color: "teal" },
+        TO_DO: { title: "TO DO", color: "stone" },
+        IN_PROGRESS: { title: "IN PROGRESS", color: "cyan" },
+        DONE: { title: "DONE", color: "teal" },
       }[key] || { title: "UNKNOWN", color: "gray" };
 
       return (
@@ -32,11 +34,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
           cards={Object.values(cards)}
           color={columnProps.color}
           isHighlighted={draggingColumn === key}
-          onDragEnter={() => setDraggingColumn(key)}
+          onDragEnter={() => setDraggingColumn(key as StatusEnum)}
           onDragLeave={() => setDraggingColumn(null)}
           onDragOver={(e) => e.preventDefault()}
-          onDrop={() => handleDrop(key)}
+          onDrop={() => handleDrop(key as StatusEnum)}
           handleDragStart={handleDragStart}
+          handleDeleteCard={handleDeleteCard}
         />
       );
     })}
