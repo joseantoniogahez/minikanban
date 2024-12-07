@@ -1,39 +1,34 @@
-import { CARD_ENDPOINT } from "../constants";
+import { gql } from "@apollo/client";
 import { Card } from "../models/Card";
+import { client } from "./apolloClient";
 
 const createCard = async (
   title: string,
   description: string
 ): Promise<Card> => {
-  const mutation = `
-      mutation {
-        createCard(title: "${title}", description: "${description}") { 
-          card {
-            id
-            title
-            description
-            status
-          }
+  const CREATE_CARD_MUTATION = gql`
+    mutation CreateCard($title: String!, $description: String!) {
+      createCard(title: $title, description: $description) {
+        card {
+          id
+          title
+          description
+          status
         }
       }
-    `;
+    }
+  `;
 
-  const response = await fetch(CARD_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query: mutation }),
-  });
+  try {
+    const { data } = await client.mutate({
+      mutation: CREATE_CARD_MUTATION,
+      variables: { title, description },
+    });
 
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error("GraphQL Error");
+    return data.createCard.card;
+  } catch (error) {
+    throw new Error("Failed to create card.");
   }
-
-  console.log(result.data.createCard.card);
-  return result.data.createCard.card;
 };
 
 export default createCard;

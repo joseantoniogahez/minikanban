@@ -1,30 +1,25 @@
-import { CARD_ENDPOINT } from "../constants";
+import { gql } from "@apollo/client";
+import { client } from "./apolloClient";
 
 const deleteCard = async (id: string): Promise<boolean> => {
-  const mutation = `
-    mutation {
-      deleteCard(id: "${id}") { 
+  const DELETE_CARD_MUTATION = gql`
+    mutation DeleteCard($id: String!) {
+      deleteCard(id: $id) {
         success
       }
     }
   `;
 
-  const response = await fetch(CARD_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query: mutation }),
-  });
+  try {
+    const { data } = await client.mutate({
+      mutation: DELETE_CARD_MUTATION,
+      variables: { id },
+    });
 
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error("GraphQL Error");
+    return data.deleteCard.success;
+  } catch (error) {
+    throw new Error("Failed to delete card.");
   }
-
-  console.log(`Delete Success: ${result.data.deleteCard.success}`);
-  return result.data.deleteCard.success;
 };
 
 export default deleteCard;

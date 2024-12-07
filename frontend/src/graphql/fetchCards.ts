@@ -1,8 +1,9 @@
-import { CARD_ENDPOINT } from "../constants";
+import { gql } from "@apollo/client";
 import { Card } from "../models/Card";
+import { client } from "./apolloClient";
 
 const fetchCards = async (): Promise<Card[]> => {
-  const query = `
+  const GET_CARDS_QUERY = gql`
     query GetCards {
       listCards {
         id
@@ -13,21 +14,15 @@ const fetchCards = async (): Promise<Card[]> => {
     }
   `;
 
-  const response = await fetch(CARD_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-  });
+  try {
+    const { data } = await client.query({
+      query: GET_CARDS_QUERY,
+    });
 
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error("GraphQL Error");
+    return data.listCards;
+  } catch (error) {
+    throw new Error("Failed to fetch cards.");
   }
-  console.log(result.data.listCards);
-  return result.data.listCards;
 };
 
 export default fetchCards;

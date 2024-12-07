@@ -1,5 +1,6 @@
-import { CARD_ENDPOINT } from "../constants";
+import { gql } from "@apollo/client";
 import { Card, StatusEnum } from "../models/Card";
+import { client } from "./apolloClient";
 
 const updateCard = async (
   id: string,
@@ -7,13 +8,18 @@ const updateCard = async (
   description: string,
   status: StatusEnum
 ): Promise<Card> => {
-  const mutation = `
-    mutation {
+  const UPDATE_CARD_MUTATION = gql`
+    mutation UpdateCard(
+      $id: String!
+      $title: String!
+      $description: String!
+      $status: StatusEnum!
+    ) {
       updateCard(
-        id: "${id}",
-        title: "${title}",
-        description: "${description}",
-        status: ${status}
+        id: $id
+        title: $title
+        description: $description
+        status: $status
       ) {
         card {
           id
@@ -25,23 +31,21 @@ const updateCard = async (
     }
   `;
 
-  const response = await fetch(CARD_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query: mutation }),
-  });
+  try {
+    const { data } = await client.mutate({
+      mutation: UPDATE_CARD_MUTATION,
+      variables: {
+        id,
+        title,
+        description,
+        status,
+      },
+    });
 
-  const result = await response.json();
-
-  if (result.errors) {
-    console.log(result.errors);
-    throw new Error("GraphQL Error");
+    return data.updateCard.card;
+  } catch (error) {
+    throw new Error("Failed to update card.");
   }
-
-  console.log(result.data.updateCard.card);
-  return result.data.updateCard.card;
 };
 
 export default updateCard;
