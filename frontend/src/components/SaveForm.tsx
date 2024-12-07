@@ -1,30 +1,39 @@
 import React, { useState } from "react";
+import { Card } from "../models/Card";
 
-interface CreateFormProps {
+interface SaveFormProps {
+  card: Card | null;
   handleCloseForm: () => void;
-  handleCreateCard: (title: string, description: string) => void;
+  handleSaveCard: (
+    title: string,
+    description: string,
+    card: Card | null
+  ) => void;
 }
 
-const CreateForm: React.FC<CreateFormProps> = ({
+const SaveForm: React.FC<SaveFormProps> = ({
+  card,
   handleCloseForm,
-  handleCreateCard,
+  handleSaveCard,
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(card?.title || "");
+  const [description, setDescription] = useState(card?.description || "");
 
-  const handleCreate = () => {
+  const handleSave = () => {
     handleCloseForm();
-    handleCreateCard(title, description);
+    handleSaveCard(title, description, card);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-96 p-6 relative">
-        <h2 className="text-lg font-semibold mb-4">Create Card</h2>
+        <h2 className="text-lg font-semibold mb-4">
+          {card ? "Update Card" : "Create Card"}
+        </h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleCreate();
+            handleSave();
           }}
         >
           <div className="mb-4">
@@ -71,7 +80,7 @@ const CreateForm: React.FC<CreateFormProps> = ({
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
             >
-              Create
+              {card ? "Update" : "Create"}
             </button>
           </div>
         </form>
@@ -80,4 +89,4 @@ const CreateForm: React.FC<CreateFormProps> = ({
   );
 };
 
-export default CreateForm;
+export default SaveForm;

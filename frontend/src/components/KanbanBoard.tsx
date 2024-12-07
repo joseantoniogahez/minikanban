@@ -9,6 +9,7 @@ interface KanbanBoardProps {
   handleDrop: (key: StatusEnum) => void;
   handleDragStart: (card: Card) => void;
   handleDeleteCard: (card: Card) => void;
+  handleEditCard: (card: Card) => void;
 }
 
 const KanbanBoard: React.FC<KanbanBoardProps> = ({
@@ -18,6 +19,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   handleDrop,
   handleDragStart,
   handleDeleteCard,
+  handleEditCard,
 }) => (
   <div className="columns-3 gap-y-8 h-screen">
     {Object.entries(columns).map(([key, cards]) => {
@@ -40,6 +42,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
           onDrop={() => handleDrop(key as StatusEnum)}
           handleDragStart={handleDragStart}
           handleDeleteCard={handleDeleteCard}
+          handleEditCard={handleEditCard}
         />
       );
     })}
