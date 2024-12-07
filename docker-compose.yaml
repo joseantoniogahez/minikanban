@@ -4,35 +4,37 @@ services:
     volumes:
       - dynamodb_data:/home/dynamodblocal
     environment:
-      AWS_ACCESS_KEY_ID: admin
-      AWS_SECRET_ACCESS_KEY: admin123
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=admin123
     ports:
       - "8000:8000"
+    networks:
+      - kanban
 
   api:
     build: ./backend
     depends_on:
       - dynamodb
     environment:
-      AWS_ACCESS_KEY_ID: admin
-      AWS_SECRET_ACCESS_KEY: admin123
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=admin123
     ports:
       - "8080:8080"
-    volumes:
-      - ./backend/app:/app/app
+    networks:
+      - kanban
 
-  # ui:
-  #   build: ./frontend
-  #   depends_on:
-  #     - api
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend/app:/app/app
+  ui:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    networks:
+      - kanban
 
 networks:
-  default:
-    name: kanban
+  kanban:
+    driver: bridge
 
 volumes:
   dynamodb_data:
